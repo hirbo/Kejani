@@ -24,6 +24,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Profile from "./pages/Profile";
 import PrivateRoutes from "./components/PrivateRoutes";
+import CreateListing from "./pages/CreateListing";
 
 function App() {
   const router = createBrowserRouter(
@@ -33,7 +34,7 @@ function App() {
           <Route path="/pages/forgotpassword" element={<ForgotPassword />} />
           <Route path="/pages/signup" element={<SignUp />} />
           <Route path="/pages/signin" element={<SignIn />} />
-
+          <Route path="/pages/createlisting" element={<CreateListing />} />
           <Route
             path="/pages/profile"
             element={
