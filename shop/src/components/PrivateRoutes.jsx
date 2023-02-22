@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Navigate, Outlet } from 'react-router-dom';
 import {UseAuthStatus } from '../hooks/UseAuthStatus';
 import Profile from '../pages/Profile';
+import Spinner from './Spinner';
 
 function PrivateRoutes({children}) {
 
@@ -13,7 +14,7 @@ const {loggedIn,loading}=UseAuthStatus();
   if(loading){
     //Show loading indicator until authentication info received
     return <>
-    <h1>Loading...</h1>
+    <Spinner/>
     </>
       
     

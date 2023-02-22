@@ -65,7 +65,7 @@ function App() {
         pauseOnHover
         theme="dark"
       />
-      ;
+  
       <RouterProvider router={router} />
     </div>
   );
