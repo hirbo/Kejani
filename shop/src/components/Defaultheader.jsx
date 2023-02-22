@@ -18,7 +18,7 @@ const matchroute = (route) => {  // Check if the route passed in matches the cur
 
 // Use the useState hook to set up the page state
 const [pageState, setPageState] = useState();
-
+const [path,setPath]=useState()
 // Get access to the navigate method from react-router-dom 
 const navigate = useNavigate();
 
@@ -31,9 +31,11 @@ useEffect(() => {
     if (user) {
       // Set the page state to profile if the user is authenticated
       setPageState("profile");
+      setPath("../pages/profile")
     } else {
       // Else, the set the page state to signIn
       setPageState("signIn");
+      setPath("../pages/signin")
     }
   });
 }, [auth]);
@@ -75,13 +77,15 @@ useEffect(() => {
           </NavLink>
 
           <NavLink
-            to="../pages/signin"
+            to={path}
             className={`font-semibold py-3 text-lg border-b-4
              border-b-transparent transition ease-in-out ${
                (matchroute("/pages/signin") || matchroute("/pages/profile")) &&
                "text-black border-b-yellow-600  "
              }`}
-            onClick={() => navigate("/pages/signin")}
+            onClick={() => {
+
+            }}
           >
             {pageState}
           </NavLink>
