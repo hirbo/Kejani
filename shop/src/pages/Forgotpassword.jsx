@@ -2,25 +2,39 @@ import React, { useState } from 'react'
 import Forgot from './forgot.png'
 import { Link } from 'react-router-dom';
 import Oauth from '../components/Oauth';
+import { toast } from 'react-toastify';
+import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
 
 function ForgotPassword() {
-  const [formData, setFormData] = useState(
-    {
-      email: '',
-      password: ''
-    }
-  )
-  const { email } = formData;
-  function Change(e) {
-    setFormData((prevState) => ({
-      ...prevState,
-      [e.target.id]:e.target.value
+  // Set the initial state of formData
+const [formData, setFormData] = useState({
+  email: ''
+});
 
-    }))
-      console.log(email)
-     
+// Get the email from formData
+const { email } = formData;
+
+// Function that updates the data when user enters their email
+function Change(e) {
+  setFormData((prevState) => ({
+    ...prevState,
+    [e.target.id]:e.target.value
+  }));
+}
+
+// Submit function that sends an email reset email with get auth
+async function submitEmail (e){
+  e.preventDefault();
+  try{
+    const auth = getAuth();
+    await sendPasswordResetEmail(auth,email);
+    toast.success('Email sent')
+
+  }catch(err){
+    toast.error('Wrong Email')
   }
- 
+
+}
  
 
 
@@ -51,7 +65,8 @@ function ForgotPassword() {
            <button className='w-full shadow-md hover:bg-blue-700 font-sans
                                bg-blue-500 mt-4 rounded-md  font-semibold 
                                 active:bg-blue-900 h-8
-                               text-zinc-900 transition ease-in-out '    >
+                               text-zinc-900 transition ease-in-out '  
+                               onClick={submitEmail}  >
                                 Reset Password
               </button>
           </form>

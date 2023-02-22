@@ -1,30 +1,47 @@
 import React, { useState } from 'react'
 import SignPic from './signin.jpg'
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Oauth from '../components/Oauth';
+import {toast} from 'react-toastify'
+import { async } from '@firebase/util';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 function SignIn() {
   const [formData, setFormData] = useState(
-    {
-      email: '',
-      password: ''
-    }
-  )
-  const { email, password } = formData;
-  function Change(e) {
-    setFormData((prevState) => ({
-      ...prevState,
-      [e.target.id]:e.target.value
-
-    }))
-      console.log(email)
-     
+  {
+  email: '', // Stores the email value
+  password: '' // Stores the password value
   }
+  )
+  
+  const { email, password } = formData; // Destructuring to make handling the data easier
+  
+  // Handles changes in the form state
+  function Change(e) {
+  setFormData((prevState) => ({
+  ...prevState, // Keeps previous values of the form state
+  [e.target.id]: e.target.value // Sets the value for the relevant id
+  }))
  
   
+  }
+  const navigate =useNavigate();
 
+async function onSubmit (e){
+  e.preventDefault()
+  try{
+    const auth =getAuth();
+    const usercredntials = await signInWithEmailAndPassword(auth,email,password)
+    if (usercredntials.user){
+      navigate('/');
+      toast.success('signed in sucessfully')
+    }
+  }catch(err){
+    toast.error('bad cerdentials')
+  }
 
+}
   
   return (
     <section className=' '>
@@ -55,7 +72,8 @@ function SignIn() {
            <button className='w-full shadow-md hover:bg-blue-700
                                bg-blue-500 mt-4 rounded-md  font-semibold 
                                 active:bg-blue-900 h-8
-                               text-zinc-900 transition ease-in-out '    >
+                               text-zinc-900 transition ease-in-out  whitespace-nowrap  '  
+                               onClick={onSubmit}  >
                                 SIGN In
               </button>
           </form>
