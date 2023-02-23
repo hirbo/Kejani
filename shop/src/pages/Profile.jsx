@@ -1,10 +1,20 @@
 import { getAuth, updateProfile } from "firebase/auth";
-import { doc, updateDoc } from "firebase/firestore";
-import React, { useState } from "react";
+import {
+  collection,
+  doc,
+  getDocs,
+  orderBy,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { db } from "../FirebaseConfig";
 import { FcHome } from "react-icons/fc";
+import Listing from "../components/ListingItem";
+import ListingItem from "../components/ListingItem";
 
 function Profile() {
   //Get authentication and store as 'auth'
@@ -18,6 +28,8 @@ function Profile() {
     name: auth.currentUser.displayName,
     email: auth.currentUser.email,
   });
+  const [listings,setListings]=useState([]);
+  const [loading,setLoading]=useState(false);
 
   // Get values of name and email from Data
   const { email, name } = Data;
@@ -71,8 +83,37 @@ function Profile() {
       toast.err("error");
     }
   }
+  // Use the useEffect() Hook to GET the user listings
+  useEffect(() => {
+    // Asynchronous function to get the user listing
+    async function getUserListing() {
+      // Create Firestore reference
+      const ref = collection(db, "listings");
+      // Create Query with conditions
+      const q = query(
+        ref,
+        where("userRef", "==", auth.currentUser.uid),
+        orderBy("timestamp", "desc")
+      );
+      // Get query snapshot
+      const querySnap = await getDocs(q);
+      let listings = [];
+      // loop through each snapshot and push it into new array called listings
+      querySnap.forEach((doc) => {
+        return listings.push({
+          id: doc.id,
+          data: doc.data(),
+        });
+      });
+      setListings(listings);
+      setLoading(false)
+    }
+    // Call the getUserListing function
+    getUserListing();
+  }, [auth.currentUser.uid]);
 
   return (
+    <>
     <section className=" max-w-6xl mx-auto justify-center items-center flex-col ">
       <h1 className=" text-center text-3xl font-bold font-serif ">profile</h1>
       <div className="w-full md:w-[50%cd shop] mt-6 px-3">
@@ -124,14 +165,35 @@ function Profile() {
             class="bg-blue-700  w-full text-white uppercase font-semibold px-7 py-3
                      rounded-md shadow-md hover:bg-blue-800  transition ease-in-out hover:shadow-lg active:bg-blue-900"
           >
-            <Link to="/pages/createlisting" class='flex justify-center items-center'>
-              <FcHome class='mr-2 text-3xl bg-emerald-700 rounded-full p-1 border-2 '/>
+            <Link
+              to="/pages/createlisting"
+              class="flex justify-center items-center"
+            >
+              <FcHome class="mr-2 text-3xl bg-emerald-700 rounded-full p-1 border-2 " />
               sell or rent your home
             </Link>
           </button>
         </form>
       </div>
     </section>
+    <div class='  flex items-center justify-center mx-auto'>
+      {!loading && listings.length > 0 &&(
+        <>
+
+        <h1 class='text-center font-semibold '>my listings</h1>
+        <ul class='flex space-x-3 mt-6'>
+          {listings.map((listing) => ( 
+            <ListingItem
+            key={listing.id}
+            id={listing.id}
+            listing={listing.data}
+            />
+          ))}
+        </ul>
+        </>
+      ) }
+    </div>
+    </>
   );
 }
 
