@@ -82,11 +82,7 @@ useEffect(() => {
              border-b-transparent transition ease-in-out ${
                (matchroute("/pages/signin") || matchroute("/pages/profile")) &&
                "text-black border-b-yellow-600  "
-             }`}
-            onClick={() => {
-
-            }}
-          >
+             }`}>
             {pageState}
           </NavLink>
         </div>

@@ -34,12 +34,19 @@ function App() {
           <Route path="/pages/forgotpassword" element={<ForgotPassword />} />
           <Route path="/pages/signup" element={<SignUp />} />
           <Route path="/pages/signin" element={<SignIn />} />
-          <Route path="/pages/createlisting" element={<CreateListing />} />
           <Route
             path="/pages/profile"
             element={
               <PrivateRoutes>
                 <Profile />
+              </PrivateRoutes>
+            }
+          />
+          <Route
+            path="/pages/createlisting"
+            element={
+              <PrivateRoutes>
+                <CreateListing />
               </PrivateRoutes>
             }
           />

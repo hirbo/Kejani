@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Navigate, Outlet } from 'react-router-dom';
 import {UseAuthStatus } from '../hooks/UseAuthStatus';
+import CreateListing from '../pages/CreateListing';
 import Profile from '../pages/Profile';
 import Spinner from './Spinner';
 
@@ -20,9 +21,9 @@ const {loggedIn,loading}=UseAuthStatus();
     
   } 
       //If logged in show Outlet component otherwise redirect to login
-    return loggedIn ? <Profile/> : <Navigate to='/pages/signin' />
+    return loggedIn ? children : <Navigate to='/pages/signin' />
   
-
+    
   
 
 }

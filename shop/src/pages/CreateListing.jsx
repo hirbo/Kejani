@@ -1,38 +1,213 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
+import Spinner from "../components/Spinner";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  sna,
+} from "firebase/storage";
+import { async } from "@firebase/util";
+import { getAuth } from "firebase/auth";
+import { v4 as uuidv4 } from "uuid";
+import {
+  addDoc,
+  collection,
+  serverTimestamp,
+  setDoc,
+} from "firebase/firestore";
+import { db } from "../FirebaseConfig";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function CreateListing() {
+  // Assign formData object to state
+  const [imgurl, setUrl] = useState("");
+  const [loading, setLoading] = useState(false);
+  const auth = getAuth();
   const [formData, setformData] = useState({
-    type: "rent",
+    type: "sale",
     name: "",
     bedrooms: 1,
-    bathrooms: 1,
-    parking:false,
-    furnished:false,
-    adress:"",
-    description:"",
-    offer:true,
-    regularprice:0,
-    discountedprice:0
+    bathrooms: 0,
+    parking: false,
+    furnished: false,
+    adress: "",
+    description: "",
+    offer: false,
+    regularprice: 0,
+    discountedprice: 0,
+    images: {},
   });
 
-  const {offer,
-        description,
-        discountedprice,
-        adress,
-        parking,
-        furnished,
-        bedrooms, 
-        bathrooms,
-        regularprice,
-            type,
-            name } = formData;
-  function onChange() {}
+  // destructuring data from the formData object
+  const {
+    offer,
+    description,
+    discountedprice,
+    adress,
+    parking,
+    furnished,
+    bedrooms,
+    bathrooms,
+    regularprice,
+    type,
+    name,
+    images,
+    latitude,
+    longitude,
+  } = formData;
+
+  // function to change state depending on the event target value
+  // This function is called when the value of an input element is changed
+  function onChange(e) {
+    // Declare a variable to hold a boolean value
+    let boolean = null;
+
+    // If the value of the input element is 'true', set boolean to true
+    if (e.target.value === "true") {
+      boolean = true;
+    }
+
+    // If the value of the input element is 'false', set boolean to false
+    if (e.target.value === "false") {
+      boolean = false;
+    }
+
+    // If the input element has files attached (such as a file upload input),
+    // update the formData state with the attached files
+    if (e.target.files) {
+      setformData((prev) => ({
+        ...prev,
+        images: e.target.files,
+      }));
+    }
+
+    // If the input element does not have files attached, update the formData
+    // state with the input element's value, unless it is a boolean, in which
+    // case, use the boolean value previously determined
+    if (!e.target.files) {
+      setformData((prev) => ({
+        ...prev,
+        [e.target.id]: boolean ?? e.target.value,
+      }));
+    }
+  }
+  // define a function called submitForm that takes an event object as a parameter
+  async function submitForm(e) {
+    // prevent the default behavior of the event
+    e.preventDefault();
+    // set the loading state to true
+    setLoading(true);
+    // check if the discounted price is greater than or equal to the regular price
+    if (discountedprice >= regularprice) {
+      // if it is, set the loading state to false and display an error message using a toast
+      setLoading(false);
+      toast.error("regular price is lower than discounted price");
+      // return to exit the function
+      return;
+    }
+    // check if the number of images exceeds six
+    if (images.length > 6) {
+      // if it does, set the loading state to false and display an error message using a toast
+      setLoading(false);
+      toast.error("Max of six images are allowed");
+      // return to exit the function
+      return;
+    }
+
+    // define an asynchronous function called storeImage that takes an image parameter
+    async function storeImage(image) {
+      // return a promise that resolves or rejects based on whether the image is uploaded successfully or not
+      return new Promise((resolve, reject) => {
+        // get the storage object
+        const storage = getStorage();
+        // create a unique filename for the image that includes the user ID, image name, and a UUID
+        const filename = ` ${auth.currentUser.uid}-${image.name}-${uuidv4()} `;
+        // create a storage reference to the file
+        const storageRef = ref(storage, filename);
+        // upload the file using the storage reference and create an upload task
+        const uploadtask = uploadBytesResumable(storageRef, image);
+
+        // listen to state changes of the upload task
+        uploadtask.on(
+          "state_changed",
+          (snapshot) => {
+            // calculate the upload progress
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log(progress);
+            // log the state of the snapshot
+            switch (snapshot.state) {
+              case "paused":
+                console.log("paused");
+                break;
+              case "running":
+                console.log("uploading");
+                break;
+            }
+          },
+          // handle errors during the upload
+          (error) => {
+            reject(error);
+          },
+          // resolve the promise once the upload is complete and get the download URL of the uploaded file
+          () => {
+            getDownloadURL(uploadtask.snapshot.ref).then((downloadUrl) => {
+              resolve(downloadUrl);
+            });
+          }
+        );
+      });
+    }
+
+    // This code uploads multiple images to a server using the storeImage() function
+    // and Promise.all()
+
+    // Use Promise.all() to execute storeImage() on each image in the images array.
+    // This will create an array of Promises.
+    const imgUrls = await Promise.all(
+      [...images].map((image) => storeImage(image))
+    )
+      // If there is an error during the Promise.all() execution, the catch block will be triggered.
+      .catch((error) => {
+        setLoading(false); // stop the loading spinner
+        toast.error("Images not uploaded"); // display an error message to the user
+        return; // return nothing
+      });
+
+    // This code creates a copy of the form data with additional fields, such as image URLs and a timestamp.
+    const formDataCopy = {
+      ...formData,
+      imgUrls, // Add the image URLs from the previous Promise.all() call
+      timestamp: serverTimestamp(), // Add a timestamp from the server
+      userRef: auth.currentUser.uid, // Add the current user's UID
+    };
+
+    // Remove unnecessary fields from the copied form data object.
+    delete formDataCopy.images; // Remove the images array, as we already uploaded them
+    !formDataCopy.offer && delete formDataCopy.discountedprice; // Remove the discounted price if there's no offer
+    delete formDataCopy.latitude; // Remove the latitude field
+    delete formDataCopy.longitude; // Remove the longitude field
+
+    // Add the form data copy to a new document in the "listings" collection in Firestore.
+    const docRef = await addDoc(collection(db, "listings"), formDataCopy);
+
+    // Stop the loading spinner and display a success message to the user.
+    setLoading(false);
+    toast.success("Listing created");
+  }
+
+  // if the loading state is true, display a spinner
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
     <main class="max-w-md px-2 mx-auto">
       <h1 class="text-3xl text-center mt-6 font-bold">Create Listing</h1>
 
-      <form action="">
+      <form action="" onSubmit={submitForm}>
         <p class="text-lg mt-6 font-semibold">sell or rent</p>
         <div class="flex space-x-6 mx-auto ">
           <button
@@ -53,12 +228,12 @@ export default function CreateListing() {
             onClick={onChange}
             type="button"
             id="type"
-            value="sale"
+            value="rent"
             class={`px-16 py-3 font-medium text-sm 
             uppercase shadow-md rounded-md hover:shadow-lg
             active:shadow-lg focus:shadow-lg
             transition  duration-150 ease-in-out
-            ${type === "sell" ? "bg-slate-300" : "bg-slate-600"}
+            ${type === "sale" ? "bg-slate-300" : "bg-slate-600"}
             `}
           >
             rent
@@ -84,61 +259,59 @@ export default function CreateListing() {
         <div class=" flex space-x-20">
           <div class="">
             <p class="text-lg font-semibold">Beds</p>
-            <input type="number"
-             id="bedrooms"
-              value={bedrooms} 
-              onChange={onchange} 
-              min='1' 
-              max='2' 
-              required 
-              class='px-4 py-2 text-gray-800 bg-white rounded-md transition duration-150 ease-in-out
-              text-center w-full
-  
-              '/>
-              
+            <input
+              type="number"
+              id="bedrooms"
+              value={bedrooms}
+              onChange={onChange}
+              min="1"
+              max="50"
+              required
+              class="px-4 py-2 text-gray-800 bg-white rounded-md transition duration-150 ease-in-out
+                text-center w-full
+    
+              "
+            />
           </div>
           <div class="">
             <p class="text-lg font-semibold">Baths</p>
-            <input 
-            type="number" 
-            id="bathrooms" value={bathrooms} 
-            onChange={onchange}  min='1' max='2' 
-            required 
-            class='px-4 py-2 text-gray-800 bg-white rounded-md transition duration-150 ease-in-out
+            <input
+              type="number"
+              id="bathrooms"
+              value={bathrooms}
+              onChange={onChange}
+              min="1"
+              max="30"
+              required
+              class="px-4 py-2 text-gray-800 bg-white rounded-md transition duration-150 ease-in-out
                         text-center w-full
-            '
+            "
             />
           </div>
         </div>
-        <p class="text-lg mt-6 font-semibold">Parking Spot</p>
-        <div class="flex space-x-6 mx-auto ">
+        <p className="text-lg mt-6 font-semibold">Parking spot</p>
+        <div className="flex">
           <button
-            onClick={onChange}
             type="button"
             id="parking"
             value={true}
-            class={`px-16 py-3 font-medium text-sm  
-            uppercase shadow-md rounded-md hover:shadow-lg
-            active:shadow-lg focus:shadow-lg
-            transition  duration-150 ease-in-out
-            ${!parking ? "bg-slate-300" : "bg-slate-600"}
-            `}
+            onClick={onChange}
+            className={`mr-3 px-7 py-3 font-medium text-sm uppercase shadow-md rounded hover:shadow-lg focus:shadow-lg active:shadow-lg transition duration-150 ease-in-out w-full ${
+              !parking ? "bg-white text-black" : "bg-slate-600 text-white"
+            }`}
           >
-            yes
+            Yes
           </button>
           <button
-            onClick={onChange}
-            type="parking"
-            id="type"
+            type="button"
+            id="parking"
             value={false}
-            class={`px-16 py-3 font-medium text-sm 
-            uppercase shadow-md rounded-md hover:shadow-lg
-            active:shadow-lg focus:shadow-lg
-            transition  duration-150 ease-in-out
-            ${parking ? "bg-slate-300" : "bg-slate-600"}
-            `}
+            onClick={onChange}
+            className={`ml-3 px-7 py-3 font-medium text-sm uppercase shadow-md rounded hover:shadow-lg focus:shadow-lg active:shadow-lg transition duration-150 ease-in-out w-full ${
+              parking ? "bg-white text-black" : "bg-slate-600 text-white"
+            }`}
           >
-            No
+            no
           </button>
         </div>
         <p class="text-lg mt-6 font-semibold">furnished</p>
@@ -166,7 +339,7 @@ export default function CreateListing() {
             uppercase shadow-md rounded-md hover:shadow-lg
             active:shadow-lg focus:shadow-lg
             transition  duration-150 ease-in-out
-            ${ furnished ? "bg-slate-300" : "bg-slate-600"}
+            ${furnished ? "bg-slate-300" : "bg-slate-600"}
             `}
           >
             No
@@ -179,7 +352,6 @@ export default function CreateListing() {
           value={adress}
           onChange={onChange}
           placeholder="Name"
-          
           required
           class="w-full text-gray-900 bg-white border rounded-md
          py-2 px-4 transition duration-150 ease-in-out focus:shadow-lg 
@@ -188,6 +360,7 @@ export default function CreateListing() {
 
          "
         />
+
         <p class="text-lg mt-6 font-semibold">Description</p>
         <textarea
           type="text"
@@ -195,7 +368,6 @@ export default function CreateListing() {
           value={description}
           onChange={onChange}
           placeholder="Name"
-          
           required
           class="w-full text-gray-900 bg-white border rounded-md
          py-2 px-4 transition duration-150 ease-in-out focus:shadow-lg 
@@ -229,95 +401,93 @@ export default function CreateListing() {
             uppercase shadow-md rounded-md hover:shadow-lg
             active:shadow-lg focus:shadow-lg
             transition  duration-150 ease-in-out
-            ${ offer ? "bg-slate-300" : "bg-slate-600"}
+            ${offer ? "bg-slate-300" : "bg-slate-600"}
             `}
           >
             No
           </button>
         </div>
-        <div class='mt-3'>
-            <p class='text-lg font-semibold'>Regular price</p>
-            <div class='mt-2 flex items-center'>
-                
-                <div>
-                    <input
-                    type="number"
-                    id='regularprice'
-                    value={regularprice}
-                    onchange={onchange}
-                    min='1000'
-                    max='400000000'
-                    className="
+        <div class="mt-3">
+          <p class="text-lg font-semibold">Regular price</p>
+          <div class="mt-2 flex items-center">
+            <div>
+              <input
+                type="number"
+                id="regularprice"
+                value={regularprice}
+                onChange={onChange}
+                min="1000"
+                max="400000000"
+                className="
                     w-full px-4 py-4  text-gray-600 bg-white rounded-md
                     transition duration-150 ease-in-out focus:shadow-lg
                     
                     "
-                    />
-                </div>
-                {type === 'rent' &&
-                <div>
-                    <p class=' text-xl font-semibold whitespace-nowrap '>$ / month</p>
-                </div>
-                }
+              />
             </div>
+            {type === "rent" && (
+              <div>
+                <p class=" text-xl font-semibold whitespace-nowrap ">
+                  $ / month
+                </p>
+              </div>
+            )}
+          </div>
         </div>
 
-
-        {offer &&
-                <div class='mt-3'>
-                <p class='text-lg font-semibold'>Discounted price</p>
-                <div class='mt-2 flex items-center'>
-                    
-                    <div>
-                        <input
-                        type="number"
-                        id='discountedprice'
-                        value={discountedprice}
-                        onchange={onchange}
-                        min='1000'
-                        max='400000000'
-                        className="
+        {offer && (
+          <div class="mt-3">
+            <p class="text-lg font-semibold">Discounted price</p>
+            <div class="mt-2 flex items-center">
+              <div>
+                <input
+                  type="number"
+                  id="discountedprice"
+                  value={discountedprice}
+                  onChange={onChange}
+                  min="1000"
+                  max="400000000"
+                  className="
                         w-full px-4 py-4  text-gray-600 bg-white rounded-md
                         transition duration-150 ease-in-out focus:shadow-lg
                         
                         "
-                        />
-                    </div>
-                    {type === 'rent' &&
-                    <div>
-                        <p class=' text-xl font-semibold whitespace-nowrap '>$ / month</p>
-                    </div>
-                    }
+                />
+              </div>
+              {type === "rent" && (
+                <div>
+                  <p class=" text-xl font-semibold whitespace-nowrap ">
+                    $ / month
+                  </p>
                 </div>
+              )}
             </div>
-        }
-       <div class='mt-6'>
-        <p class='text-lg font-semibold'>
-            Images
-        </p>
-        <p class='text-gray-600'>
-            First Image will be the cover(max of 6)
-        </p>
-        <input 
-        multiple
-        required
-        onchange={onChange}
-        accept='.jpg , .png , .jpeg'
-        type="file" 
-        id="images"
-        class='w-full px-3 py-1.5 text-gray-700 bg-white border rounded-md 
+          </div>
+        )}
+        <div class="mt-6">
+          <p class="text-lg font-semibold">Images</p>
+          <p class="text-gray-600">First Image will be the cover(max of 6)</p>
+          <input
+            multiple
+            required
+            onChange={onChange}
+            accept=".jpg , .png , .jpeg"
+            type="file"
+            id="images"
+            class="w-full px-3 py-1.5 text-gray-700 bg-white border rounded-md 
         transition duration-150 ease-in-out focus:bg-slate-500 focus:shadow-lg
-        '/>
-       </div>
-       <button
-       type="submit"
-       class='mb-6 w-full bg-blue-600 text-yellow-50 font-semibold
+        "
+          />
+        </div>
+        <button
+          type="submit"
+          class="mb-6 w-full bg-blue-600 text-yellow-50 font-semibold
         shadow-md hover:bg-blue-600 hover:shadow-lg focus:bg-blue-700
         rounded-md  active:bg-blue-900 transition duration-150 py-5 px-4 mt-6 ease-in-out
-        '
-       >
-            Create Listing
-       </button>
+        "
+        >
+          Create Listing
+        </button>
       </form>
     </main>
   );
