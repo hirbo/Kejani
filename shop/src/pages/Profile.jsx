@@ -176,11 +176,10 @@ function Profile() {
         </form>
       </div>
     </section>
+    <h1 class='text-center font-semibold '>my listings</h1>
     <div class='  flex items-center justify-center mx-auto'>
       {!loading && listings.length > 0 &&(
         <>
-
-        <h1 class='text-center font-semibold '>my listings</h1>
         <ul class='flex space-x-3 mt-6'>
           {listings.map((listing) => ( 
             <ListingItem
