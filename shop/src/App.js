@@ -25,6 +25,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Profile from "./pages/Profile";
 import PrivateRoutes from "./components/PrivateRoutes";
 import CreateListing from "./pages/CreateListing";
+import EditListing from "./pages/EditListing";
 
 function App() {
   const router = createBrowserRouter(
@@ -51,6 +52,15 @@ function App() {
             }
           />
 
+          <Route
+            path="/pages/editlisting/:listingId"
+            element={
+              <PrivateRoutes>
+                <EditListing />
+              </PrivateRoutes>
+            }
+          />
+
           <Route path="pages/Offers" element={<Offers />}></Route>
 
           <Route path="*" element={<ErrorPage />} />
@@ -73,7 +83,7 @@ function App() {
         pauseOnHover
         theme="dark"
       />
-  
+
       <RouterProvider router={router} />
     </div>
   );

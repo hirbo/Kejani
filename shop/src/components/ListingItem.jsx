@@ -2,12 +2,36 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Moment from "react-moment";
 import { MdLocationPin } from "react-icons/md";
-function ListingItem({ listing, id }) {
+import { FaTrash } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
+import { MdEdit } from "react-icons/md";
+import { getAuth } from "firebase/auth";
+
+
+
+
+
+
+
+
+
+const auth = getAuth();
+
+
+
+
+
+
+function ListingItem({ listing, id,onDelete,onEdit }) {
+
+
+
+
   return (
     <li
-      class="relative   bg-white flex flex-col justify-between items-center shadow-md
+      class="relative  bg-y  flex flex-col justify-between items-center shadow-md
               hover:shadow-xl rounded-md overflow-hidden transition-shadow duration-150 m-1
-
+              bg-opacity-50 backdrop-blur-3xl backdrop-filter backdrop-saturate-150 backdrop-contrast-200 
               "
     >
       <Link to={`/category/${listing.type}/${id}`} />
@@ -25,7 +49,7 @@ function ListingItem({ listing, id }) {
       </Moment>
       <div class="w-full p-[10px]">
         <div class="flex items-center space-x-1">
-          <MdLocationPin class="h-4 w-4" />
+          <MdLocationPin class="h-4 w-4 text-emerald-900" />
           <p class="font-semibold text-sm truncate">{listing.adress}</p>
         </div>
 
@@ -34,10 +58,10 @@ function ListingItem({ listing, id }) {
           ${listing.offer ? listing.discountedprice : listing.regularprice}
           {listing.type === "rent" && "/mpnth"}
         </p>
-        <div class='flex w-full  space-x-12 mt-1' >
+        <div class="flex w-full  space-x-8 mt-1">
           <div>
             <p class="font-semibold font-sans text-lg">
-              {listing.bedrooms > 1 ? `${listing.bedrooms} bedrooms` : "1 bed"}
+              {listing.bedrooms > 1 ? `${listing.bedrooms} beds` : "1 bed"}
             </p>
           </div>
           <div>
@@ -46,6 +70,22 @@ function ListingItem({ listing, id }) {
             </p>
           </div>
         </div>
+      </div>
+      <div class=''>
+       {auth?.currentUser?.uid === listing.userRef ? <>
+        <MdDelete
+       class= ' h-7 w-6 absolute bottom-2 right-2 cursor-pointer text-red-600 ' 
+        onClick={onDelete}
+        />
+     
+       
+        <MdEdit
+       class='  text-lg h-7 w-6 absolute bottom-2 right-8  cursor-pointer text-blue-600   ' 
+       onClick={onEdit}
+        />
+       </> :<></>}
+       
+     
       </div>
     </li>
   );
