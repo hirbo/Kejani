@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Moment from "react-moment";
 import { MdLocationPin } from "react-icons/md";
 import { FaTrash } from "react-icons/fa";
@@ -19,7 +19,7 @@ const auth = getAuth();
 
 
 
-
+const navigate =useNavigate
 
 
 function ListingItem({ listing, id,onDelete,onEdit }) {
@@ -27,19 +27,25 @@ function ListingItem({ listing, id,onDelete,onEdit }) {
 
 
 
-  return (
-    <li
+  return (<>
+   
+    <div
       class="relative  bg-y  flex flex-col justify-between items-center shadow-md
               hover:shadow-xl rounded-md overflow-hidden transition-shadow duration-150 m-1
               bg-opacity-50 backdrop-blur-3xl backdrop-filter backdrop-saturate-150 backdrop-contrast-200 
               "
-    >
-      <Link to={`/category/${listing.type}/${id}`} />
-      <img
+             
+    > <Link  to={`/pages/listinginfo/${listing.type}/${listing.userRef}`}>
+       
+       <img
+        
         className="h-[170px] w-full object-cover hover:scale-105 transition-scale duration-200 ease-in"
         loading="lazy"
         src={listing.imgUrls[0]}
       />
+      <div>info</div>
+      </Link>
+     
       <Moment
         class="absolute top-2 left-2 text-yellow-100
              bg-amber-500 rounded-md py-1 px-2 text-sm font-semibold  "
@@ -74,20 +80,27 @@ function ListingItem({ listing, id,onDelete,onEdit }) {
       <div class=''>
        {auth?.currentUser?.uid === listing.userRef ? <>
         <MdDelete
-       class= ' h-7 w-6 absolute bottom-2 right-2 cursor-pointer text-red-600 ' 
+       class= ' hover:text-red-700 h-7 w-6 absolute bottom-2 right-2 cursor-pointer text-red-600 ' 
         onClick={onDelete}
         />
      
        
         <MdEdit
-       class='  text-lg h-7 w-6 absolute bottom-2 right-8  cursor-pointer text-blue-600   ' 
+       class=' hover:text-blue-700 text-lg h-7 w-6 absolute bottom-2 right-8  cursor-pointer text-blue-600   ' 
        onClick={onEdit}
         />
        </> :<></>}
        
-     
+      
       </div>
-    </li>
+     
+     
+      
+    </div>
+    
+    </>
+    
+    
   );
 }
 
