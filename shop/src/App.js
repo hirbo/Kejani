@@ -36,7 +36,7 @@ function App() {
           <Route path="/pages/forgotpassword" element={<ForgotPassword />} />
           <Route path="/pages/signup" element={<SignUp />} />
           <Route path="/pages/signin" element={<SignIn />} />
-          <Route path="/pages/listinginfo/:listingtype/:listingId" element={<ListingInfo />} />
+          <Route path="/pages/listinginfo/:listingId" element={<ListingInfo />} />
           <Route
             path="/pages/profile"
             element={

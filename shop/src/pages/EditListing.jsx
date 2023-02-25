@@ -91,6 +91,7 @@ export default function EditListing() {
 
     // Call the fetchListing function when the component mounts (i.e., the dependency array is empty)
     fetchListing();
+    
   }, []);
   useEffect(()=>{
     if(listing && auth.currentUser.uid!==listing.userRef){

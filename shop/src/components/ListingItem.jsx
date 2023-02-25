@@ -35,7 +35,7 @@ function ListingItem({ listing, id,onDelete,onEdit }) {
               bg-opacity-50 backdrop-blur-3xl backdrop-filter backdrop-saturate-150 backdrop-contrast-200 
               "
              
-    > <Link  to={`/pages/listinginfo/${listing.type}/${listing.userRef}`}>
+    > <Link  to={`/pages/listinginfo/${id}`}>
        
        <img
         
