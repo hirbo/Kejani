@@ -38,6 +38,8 @@ export default function CreateListing() {
     regularprice: 0,
     discountedprice: 0,
     images: {},
+    landlordcontact:'',
+    size:0,
   });
 
   // destructuring data from the formData object
@@ -54,8 +56,9 @@ export default function CreateListing() {
     type,
     name,
     images,
-    latitude,
-    longitude,
+    landlordcontact,
+    size,
+    
   } = formData;
 
   // function to change state depending on the event target value
@@ -352,6 +355,36 @@ export default function CreateListing() {
           value={adress}
           onChange={onChange}
           placeholder="Name"
+          required
+          class="w-full text-gray-900 bg-white border rounded-md
+         py-2 px-4 transition duration-150 ease-in-out focus:shadow-lg 
+          focus:bg-white hover:shadow-lg active:bg-slate-800
+          focus:text-slate-900 resize-none
+
+         "
+        />
+        <p class="text-lg mt-6 font-semibold">size in sq ft</p>
+        <textarea
+          type="number"
+          id="size"
+          value={size}
+          onChange={onChange}
+          placeholder="size in sq ft"
+          required
+          class="w-full text-gray-900 bg-white border rounded-md
+         py-2 px-4 transition duration-150 ease-in-out focus:shadow-lg 
+          focus:bg-white hover:shadow-lg active:bg-slate-800
+          focus:text-slate-900 resize-none
+
+         "
+        />
+        <p class="text-lg mt-6 font-semibold">LandLord contact</p>
+        <textarea
+          type="text"
+          id="landlordcontact"
+          value={landlordcontact}
+          onChange={onChange}
+          placeholder="contact"
           required
           class="w-full text-gray-900 bg-white border rounded-md
          py-2 px-4 transition duration-150 ease-in-out focus:shadow-lg 

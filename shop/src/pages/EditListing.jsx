@@ -42,6 +42,8 @@ export default function EditListing() {
     regularprice: 0,
     discountedprice: 0,
     images: {},
+    size:0,
+    landlordcontact:''
   });
 
   // destructuring data from the formData object
@@ -58,8 +60,8 @@ export default function EditListing() {
     type,
     name,
     images,
-    latitude,
-    longitude,
+    size,
+    landlordcontact
   } = formData;
 
   const navigate = useNavigate();
@@ -406,6 +408,36 @@ export default function EditListing() {
 
          "
         />
+        <p class="text-lg mt-6 font-semibold">size in sq ft</p>
+        <textarea
+          type="number"
+          id="size"
+          value={size}
+          onChange={onChange}
+          placeholder="size in sq ft"
+          required
+          class="w-full text-gray-900 bg-white border rounded-md
+         py-2 px-4 transition duration-150 ease-in-out focus:shadow-lg 
+          focus:bg-white hover:shadow-lg active:bg-slate-800
+          focus:text-slate-900 resize-none
+
+         "
+        />
+        <p class="text-lg mt-6 font-semibold">LandLord contact</p>
+        <textarea
+          type="tex"
+          id="landlordcontact"
+          value={landlordcontact}
+          onChange={onChange}
+          placeholder="contact"
+          required
+          class="w-full text-gray-900 bg-white border rounded-md
+         py-2 px-4 transition duration-150 ease-in-out focus:shadow-lg 
+          focus:bg-white hover:shadow-lg active:bg-slate-800
+          focus:text-slate-900 resize-none
+
+         "
+        />
 
         <p class="text-lg mt-6 font-semibold">Description</p>
         <textarea
@@ -515,7 +547,7 @@ export default function EditListing() {
           <p class="text-gray-600">First Image will be the cover(max of 6)</p>
           <input
             multiple
-            required
+            value={imgurl}
             onChange={onChange}
             accept=".jpg , .png , .jpeg"
             type="file"

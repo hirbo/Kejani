@@ -14,7 +14,7 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SIgnUp";
 import Faq from "./pages/Forgotpassword";
 import Contact from "./pages/Profile";
-import Home from "./pages/Home";
+import Root from "./pages/Root";
 import OderHistory from "./pages/Offers";
 
 import ErrorPage from "./pages/ErrorPage";
@@ -27,12 +27,13 @@ import PrivateRoutes from "./components/PrivateRoutes";
 import CreateListing from "./pages/CreateListing";
 import EditListing from "./pages/EditListing";
 import ListingInfo from "./pages/ListingInfo";
+import Home from "./pages/Home";
 
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>
-        <Route path="/" element={<Home />}>
+        <Route path="/" element={<Root/>}>
           <Route path="/pages/forgotpassword" element={<ForgotPassword />} />
           <Route path="/pages/signup" element={<SignUp />} />
           <Route path="/pages/signin" element={<SignIn />} />
@@ -64,6 +65,7 @@ function App() {
           />
 
           <Route path="pages/Offers" element={<Offers />}></Route>
+          <Route path="pages/home" element={<Home />}></Route>
 
           <Route path="*" element={<ErrorPage />} />
         </Route>

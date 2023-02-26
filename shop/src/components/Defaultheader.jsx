@@ -55,7 +55,7 @@ useEffect(() => {
 
         <div className="space-x-10  mr-4 ">
           <NavLink
-            to="/"
+            to="../pages/home"
             onClick={() => navigate("/")}
             className={`font-semibold py-3 text-lg border-b-4
              border-b-transparent transition ease-in-out ${

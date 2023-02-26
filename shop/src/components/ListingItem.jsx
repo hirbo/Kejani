@@ -30,7 +30,7 @@ function ListingItem({ listing, id,onDelete,onEdit }) {
   return (<>
    
     <div
-      class="relative  bg-y  flex flex-col justify-between items-center shadow-md
+      class="relative  bg-y  flex flex-col justify-between items-center shadow-md min-w-[250px]
               hover:shadow-xl rounded-md overflow-hidden transition-shadow duration-150 m-1
               bg-opacity-50 backdrop-blur-3xl backdrop-filter backdrop-saturate-150 backdrop-contrast-200 
               "
@@ -43,7 +43,7 @@ function ListingItem({ listing, id,onDelete,onEdit }) {
         loading="lazy"
         src={listing.imgUrls[0]}
       />
-      <div>info</div>
+     
       </Link>
      
       <Moment

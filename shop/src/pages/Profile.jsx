@@ -151,7 +151,9 @@ function Profile() {
               value={name}
               placeholder={name}
               disabled={!changed}
-              className="w-full px-4 py-2 text-gray-700 bg-yellow-50 border-gray-900 rounded-md transition ease-in- text-lg font-sans "
+              className={`w-full px-4 py-2 text-gray-700 bg-yellow-50 border-gray-900 rounded-md transition ease-in-out mt-8 text-lg ${
+                changed && " bg-red-200 focus:bg-red-300 "
+              }`}
             />
             <input
               onChange={changeDetails}
@@ -203,10 +205,10 @@ function Profile() {
         </div>
       </section>
       <h1 class="text-center font-semibold ">my listings</h1>
-      <div class="  flex items-center justify-center mx-auto">
+      <div class="  flex flex-col items-center justify-center mx-auto">
         {!loading && listings.length > 0 && (
           <>
-            <ul class="flex space-x-3 mt-6">
+            <ul class=" grid grid-cols-4 gap-4">
               {listings.map((listing) => (
                 // iterate over the listings array and render a ListingItem component for each one
                 // pass the listing's ID, data, and two event handler functions as props to the ListingItem component
