@@ -2,6 +2,7 @@ import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import {FaShare} from 'react-icons/fa'
 import Spinner from "../components/Spinner";
 import { db } from "../FirebaseConfig";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -43,7 +44,7 @@ function ListingInfo() {
     return <Spinner />;
   }
 
-  return (
+  return ( 
     <main>
       <Swiper
         slidesPerView={1}
@@ -51,18 +52,31 @@ function ListingInfo() {
         pagination={{ type: "progressbar" }}
         effect="fade"
         modules={[EffectFade]}
-        autoplay={{ delay: 300 }}
+        autoplay={{ delay: 3000 }}
       >
-      {listing.imgUrls.map((url,index) => (
-        <SwiperSlide key={index}>
-          <div className="relative w-full overflow-hidden h-[300px]"
-          style={{background: `url(${listing.imgUrls[index]})center no-repeat`,backgroundSize:'cover'}}
-          >
-          </div>
-        </SwiperSlide>
-      ))}
+        {listing.imgUrls.map((url,index) => (
+          <SwiperSlide key={index}>
+            <div
+              className="relative w-full overflow-hidden h-[300px]"
+              style={{
+                background: `url(${listing.imgUrls[index]}) center no-repeat`,
+                backgroundSize:"cover",
+              }}
+            ></div>
+          </SwiperSlide>
+        ))}
       </Swiper>
+     <div class="fixed top-[13%] right-[3%] z-10
+                   bg-white cursor-pointer border-2
+                    border-gray-400 rounded-full w-12 h-12 
+                    flex justify-center items-center"
+                    onClick={()=>{navigator.clipboard.writeText(window.location.href);toast.success("Link copied")}}
+                    >
+
+      <FaShare class="text-lg text-slate-600"/>
+     </div>
     </main>
+    
   );
 }
 
