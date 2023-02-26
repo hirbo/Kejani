@@ -54,8 +54,8 @@ const navigate = useNavigate()
  {listings.map((listing) => ( 
     <SwiperSlide key={listing.id} >
       <Link to={`/pages/listinginfo/${listing.id}`}>
-        <div style={{background:`url(${listing.data.imgUrls[0]}) center, no-repeat `,
-        backgroundsize:'cover' 
+        <div style={{background:`url(${listing.data.imgUrls[0]}) center no-repeat`,
+        backgroundSize:'cover' 
       }}
       class='w-full h-[300px] overflow-hidden'
       > <div class='p-3'>

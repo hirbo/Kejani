@@ -90,7 +90,7 @@ function ListingInfo() {
         </div>
         <div class="w-[600px] h-[300px]">
           <h2 class="text-3xl font-semibold mb-4">{listing.name}</h2>
-          {listing.type ==="sale" ? (
+          {listing.type === "sale" ? (
             <p class=" bg-green-700 w-24 p-2 text-white font-semibold text-2-xl rounded-md ">
               For Sale
             </p>
@@ -115,10 +115,13 @@ function ListingInfo() {
             <p class="text-gray-600 font-bold">
               {listing.bathrooms}
               <FaBath class="text-blue-600" />
-              baths{" "}
+              baths
             </p>
 
-            <p class="text-gray-600 font-bold">{listing.size} sqft</p>
+            <div class="text-gray-600 font-bold flex tracking-[1px]">
+              
+              <p class="text-blue-600">{listing.size}</p> sqft
+            </div>
           </div>
           <div class="flex flex-row space-x-28 mb-4 items-center">
             <p class="text-gray-600">
@@ -153,30 +156,33 @@ function ListingInfo() {
             </p>
           )}
 
-          <div class='flex items-center  '>
-          {listing.offer ? (
-            <div class="flex flex-row justify-between items-center space-x-10">
+          <div class="flex items-center  ">
+            {listing.offer ? (
+              <div class="flex flex-row justify-between items-center space-x-10">
+                <div>
+                  <p class="text-gray-600">Regular price</p>
+                  <p class="text-2xl font-semibold text-red-600">
+                    ${listing.regularprice}
+                    {listing.type === "rent" ? <>/Month </> : <></>}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-gray-600">Discounted price</p>
+                  <p class="text-2xl font-semibold text-green-600">
+                    ${listing.discountedprice}
+                    {listing.type === "rent" ? <>/Month </> : <></>}
+                  </p>
+                </div>
+              </div>
+            ) : (
               <div>
-                <p class="text-gray-600">Regular price</p>
-                <p class="text-2xl font-semibold text-red-600">
-                  ${listing.regularprice}{listing.type === "rent" ? <>/Month </>: <></>}
+                
+                <p class="text-2xl font-semibold text-blue-600 comm ">
+                  ${listing.regularprice}
+                  {listing.type === "rent" ? <>/Month </> : <></>}
                 </p>
               </div>
-              <div>
-                <p class="text-gray-600">Discounted price</p>
-                <p class="text-2xl font-semibold text-green-600">
-                  ${listing.discountedprice}{listing.type === "rent" ? <>/Month </>: <></>}
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div>
-              <p class="text-gray-600">Regular price</p>
-              <p class="text-2xl font-semibold text-blue-600">
-                ${listing.regularprice}{listing.type === "rent" ? <>/Month </>: <></>}
-              </p>
-            </div>
-          )}
+            )}
           </div>
         </div>
       </div>

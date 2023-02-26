@@ -4,3 +4,9 @@
  body{
     background-color:rgb(235, 241, 239) ;
  }
+ .swiper-pagination-progressbar  .swiper-pagination-progressbar-fill{
+   background: gold !important
+ }
+ html::-webkit-scrollbar{
+   display: none;
+ }
