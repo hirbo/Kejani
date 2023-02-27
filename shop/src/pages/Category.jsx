@@ -1,18 +1,20 @@
 import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom';
 import ListingItem from '../components/ListingItem';
 import Spinner from '../components/Spinner';
 import { db } from '../FirebaseConfig';
 
-function Offers() {
+function Category() {
   const [offerlist,setOfferList]  = useState([]);
   const [loading,setLoading] = useState(true);
+  const params = useParams();
 
 useEffect(()=>{
  async function fetchOffers (){
-
+  
   const ref = collection(db,'listings');
-  const q = query(ref,where('offer' , '==', true ),orderBy('timestamp','desc'));
+  const q = query(ref,where('type' , '==', params.type ),orderBy('timestamp','desc'));
   const qsnap = await getDocs(q);
   let list = [];
 
@@ -38,18 +40,20 @@ if (loading){
 return <Spinner/>
 }
   return (
-    <div class='flex grid-col-4 justify-center items-center mt-6 space-x-3'>
+    <div class=' flex flex-col items-center justify-center mx-autoex grid-col-3'>
+       <div class='grid grid-cols-4 gap-4'>
       {offerlist.map((offerlist)=>( 
-        <div>
+       
            <ListingItem
          id={offerlist.id}
          key={offerlist.id}
          listing={offerlist.data}
          />
-        </div>
+       
       ))}
+       </div>
     </div>
   )
 }
 
-export default Offers
+export default Category;

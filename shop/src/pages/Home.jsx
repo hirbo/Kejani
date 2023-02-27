@@ -128,7 +128,7 @@ function Home() {
   {RentList.length > 0 ? 
     <div class='max-w-6xl mx-auto pt-4 space-y-6  mt-5 '>
     <p class = 'text-2xl font-semibold mt-6 ml-10 '>Places For Rent</p>
-     <Link to='/pages/rent' class = 'text-sm font-semibold mt-1 ml-10  text-blue-600 '>
+     <Link to='/pages/category/rent' class = 'text-sm font-semibold mt-1 ml-10  text-blue-600 '>
       Show more 
       </Link>
       <div class='flex grid-col-4 justify-center items-center mt-6 space-x-5'>
@@ -148,7 +148,7 @@ function Home() {
   {SaleList.length > 0 ? 
     <div class='max-w-6xl mx-auto pt-4 space-y-6  mt-5 '>
     <p class = 'text-2xl font-semibold mt-6 ml-10 '>Places For Sale</p>
-     <Link to='/pages/sale' class = 'text-sm font-semibold mt-1 ml-10 text-blue-600 '>
+     <Link to='/pages/category/sale' class = 'text-sm font-semibold mt-1 ml-10 text-blue-600 '>
       Show more 
       </Link>
       <div class='flex grid-col-4 justify-center items-center mt-6 space-x-5'>

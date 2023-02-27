@@ -28,6 +28,7 @@ import CreateListing from "./pages/CreateListing";
 import EditListing from "./pages/EditListing";
 import ListingInfo from "./pages/ListingInfo";
 import Home from "./pages/Home";
+import Category from "./pages/Category";
 
 function App() {
   const router = createBrowserRouter(
@@ -37,6 +38,7 @@ function App() {
           <Route path="/pages/forgotpassword" element={<ForgotPassword />} />
           <Route path="/pages/signup" element={<SignUp />} />
           <Route path="/pages/signin" element={<SignIn />} />
+          <Route path="/pages/category/:type" element={<Category />} />
           <Route path="/pages/listinginfo/:listingId" element={<ListingInfo />} />
           <Route
             path="/pages/profile"
