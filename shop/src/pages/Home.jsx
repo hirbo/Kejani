@@ -27,7 +27,7 @@ function Home() {
           });
         });
           setOfferList(listings)
-          console.log(listings);
+          
 
 
       } catch (err) {
@@ -57,7 +57,7 @@ function Home() {
           });
         });
           setRentList(listings)
-          console.log(listings);
+         
 
 
       } catch (err) {
@@ -88,7 +88,7 @@ function Home() {
           });
         });
           setSaleList(listings)
-          console.log(listings);
+          
 
 
       } catch (err) {
@@ -99,66 +99,69 @@ function Home() {
   },[]);
 
   return<>
-   <Slider />
+  <div>
+  <Slider />
+  </div>
+  
   
   
   {OfferList.length > 0 ? 
-    <div class='max-w-6xl mx-auto pt-2 h-[500px] space-y-6 bg-yellow-100 mt-5 '>
+    <div class='max-w-6xl mx-auto pt-2 h-[500px] space-y-6  mt-5 '>
     <p class = 'text-2xl font-semibold mt-6 ml-10 '>Recent Offers</p>
      <Link to='/pages/offers' class = 'text-sm font-semibold mt-1 ml-10  text-blue-600 '>
       Show more offers
       </Link>
-      <div class=' justify-center items-center grid md:grid-cols-3 lg:grid-cols-4 mt-8 '>
-      {OfferList.map((list)=>(
+      <div class='flex grid-col-4 justify-center items-center mt-6 space-x-5'>
+      {OfferList.map((offerlist)=>( 
         <div>
-          <ListingItem
-        key={list.id}
-        listing={list.data}
-        id={list.id}
-        />
+           <ListingItem
+         id={offerlist.id}
+         key={offerlist.id}
+         listing={offerlist.data}
+         />
         </div>
       ))}
-      </div>
+    </div>
     </div>
    :<></>
    }
   {RentList.length > 0 ? 
-    <div class='max-w-6xl mx-auto pt-4 space-y-6 bg-yellow-100 mt-5 '>
+    <div class='max-w-6xl mx-auto pt-4 space-y-6  mt-5 '>
     <p class = 'text-2xl font-semibold mt-6 ml-10 '>Places For Rent</p>
      <Link to='/pages/rent' class = 'text-sm font-semibold mt-1 ml-10  text-blue-600 '>
       Show more 
       </Link>
-      <div class=' justify-center items-center grid md:grid-cols-3 lg:grid-cols-4 mt-8  '>
-      {RentList.map((list)=>(
+      <div class='flex grid-col-4 justify-center items-center mt-6 space-x-5'>
+      {RentList.map((rentlist)=>( 
         <div>
-          <ListingItem
-        key={list.id}
-        listing={list.data}
-        id={list.id}
-        />
+           <ListingItem
+         id={rentlist.id}
+         key={rentlist.id}
+         listing={rentlist.data}
+         />
         </div>
       ))}
-      </div>
+    </div>
     </div>
    :<></>
    }
   {SaleList.length > 0 ? 
-    <div class='max-w-6xl mx-auto pt-4 space-y-6 bg-yellow-100 mt-5 '>
+    <div class='max-w-6xl mx-auto pt-4 space-y-6  mt-5 '>
     <p class = 'text-2xl font-semibold mt-6 ml-10 '>Places For Sale</p>
      <Link to='/pages/sale' class = 'text-sm font-semibold mt-1 ml-10 text-blue-600 '>
       Show more 
       </Link>
-      <div class=' justify-center items-center grid md:grid-cols-3 lg:grid-cols-4 mt-8 '>
-      {SaleList.map((list)=>(
+      <div class='flex grid-col-4 justify-center items-center mt-6 space-x-5'>
+      {SaleList.map((salelist)=>( 
         <div>
-          <ListingItem
-        key={list.id}
-        listing={list.data}
-        id={list.id}
-        />
+           <ListingItem
+         id={salelist.id}
+         key={salelist.id}
+         listing={salelist.data}
+         />
         </div>
       ))}
-      </div>
+    </div>
     </div>
    :<></>
    }
